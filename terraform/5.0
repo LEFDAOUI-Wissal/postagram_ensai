@@ -1,0 +1,39 @@
+[32m[2025-05-08T14:16:35.916] [INFO] default - [39mChecking whether pre-built provider exists for the following constraints:
+  provider: aws
+  version : ~
+  language: python
+  cdktf   : 0.20.7
+
+[32m[2025-05-08T14:16:38.675] [INFO] default - [39mPre-built provider does not exist for the given constraints.
+[32m[2025-05-08T14:16:38.675] [INFO] default - [39mAdding local provider registry.terraform.io/hashicorp/aws with version constraint ~ to cdktf.json
+Local providers have been updated. Running cdktf get to update...
+⠋ starting...
+[2K[1A[2K[G⠋ downloading and generating modules and providers...
+[91m[2025-05-08T14:16:39.323] [ERROR] default - [39m[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1m[0mTerraform encountered problems during initialisation, including problems
+[31m│[0m [0mwith the configuration, described below.
+[31m│[0m [0m
+[31m│[0m [0mThe Terraform configuration must be valid before initialization so that
+[31m│[0m [0mTerraform can determine which modules and providers need to be installed.[0m[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m
+[31m╵[0m[0m
+
+[91m[2025-05-08T14:16:39.323] [ERROR] default - [39m[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mInvalid version constraint[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m  on main.tf.json line 1, in terraform.required_providers.aws:
+[31m│[0m [0m   1: {"provider":{"aws":{}},"terraform":{"required_providers":{"aws":{"version":[4m"~"[0m,"source":"hashicorp/aws"}}}}[0m
+[31m│[0m [0m
+[31m│[0m [0mThis string does not use correct version constraint syntax.
+[31m╵[0m[0m
+[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mInvalid version constraint[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m  on main.tf.json line 1, in terraform.required_providers.aws:
+[31m│[0m [0m   1: {"provider":{"aws":{}},"terraform":{"required_providers":{"aws":{"version":[4m"~"[0m,"source":"hashicorp/aws"}}}}[0m
+[31m│[0m [0m
+[31m│[0m [0mThis string does not use correct version constraint syntax.
+[31m╵[0m[0m
+
+[2K[1A[2K[G⠋ downloading and generating modules and providers...

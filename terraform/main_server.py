@@ -15,13 +15,13 @@ from cdktf_cdktf_provider_aws.data_aws_caller_identity import DataAwsCallerIdent
 import base64
 
 # Mettez ici le nom du bucket S3 crée dans la partie serverless
-bucket=""
+bucket="user-task-images"
 
 # Mettez ici le nom de la table dynamoDB créée dans la partie serverless
-dynamo_table=""
+dynamo_table="rekognition-tasks"
 
 # Mettez ici l'url de votre dépôt github. Votre dépôt doit être public !!!
-your_repo=""
+your_repo="https://github.com/LEFDAOUI-Wissal/postagram_ensai.git"
 
 # Le user data pour lancer votre websservice. Il fonctionne tel quel
 user_data= base64.b64encode(f"""#!/bin/bash
@@ -51,48 +51,55 @@ class ServerStack(TerraformStack):
         
         launch_template = LaunchTemplate(
             self, "launch template",
-            image_id=""
-            instance_type=", # le type de l'instance
-            vpc_security_group_ids = [],
-            key_name="",
-            user_data=,
-            tags={"Name":"TP noté"},
+            image_id="ami-084568db4383264d4",
+            instance_type="t2.micro", # le type de l'instance
+            vpc_security_group_ids = [security_group.id],
+            key_name="vockey",
+            user_data=user_data,
+            tags={"Name":"TP note"},
             iam_instance_profile={"name":"LabInstanceProfile"}
             )
-    
+
 
         lb = Lb(
             self, "lb",
-            load_balancer_type="",
-            security_groups=[],
-            subnets=
+            load_balancer_type="application",
+            security_groups=[security_group.id],
+            subnets=subnets
         )
+
+        
 
         target_group=LbTargetGroup(
             self, "tg_group",
-            port=,
-            protocol="",
-            vpc_id=,
-            target_type=""
+            port=80,
+            protocol="HTTP",
+            vpc_id=default_vpc.id,
+            target_type="instance"
         )
+
 
         lb_listener = LbListener(
             self, "lb_listener",
-            load_balancer_arn=,
-            port=,
-            protocol="",
-            default_action=[LbListenerDefaultAction()]
+            load_balancer_arn=lb.arn,
+            port=80,
+            protocol="HTTP",
+            default_action=[LbListenerDefaultAction(type="forward", target_group_arn=target_group.arn)]
         )
 
+
         asg = AutoscalingGroup(
-            self, "",
-            min_size=,
-            max_size=,
-            desired_capacity=,
-            launch_template={"id":},
-            vpc_zone_identifier= ,
-            target_group_arns=[]
+            self, "asg",
+            min_size=2,
+            max_size=4,
+            desired_capacity=2,
+            launch_template={"id":launch_template.id},
+            vpc_zone_identifier= subnets,
+            target_group_arns=[target_group.arn]
         )
+
+
+
 
     def infra_base(self):
         """

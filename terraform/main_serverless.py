@@ -21,7 +21,7 @@ class ServerlessStack(TerraformStack):
         
         bucket = S3Bucket(
             self, "bucket",
-            bucket_prefix=""
+            bucket_prefix="user-task-images-"
         )
 
         # NE PAS TOUCHER !!!!
@@ -37,31 +37,43 @@ class ServerlessStack(TerraformStack):
 
         dynamo_table = DynamodbTable(
             self, "DynamodDB-table",
-            name= "",
-            hash_key="",
-            range_key="",
+            name="rekognition-tasks",
+            hash_key="user",
+            range_key="id",
             attribute=[
-                DynamodbTableAttribute(name="",type="S" ),
-                DynamodbTableAttribute(name="",type="S" ),
+                DynamodbTableAttribute(name="id", type="S"),
+                DynamodbTableAttribute(name="user", type="S")
             ],
             billing_mode="PROVISIONED",
             read_capacity=5,
             write_capacity=5
         )
+        
 
-        code = TerraformAsset()
+        code = TerraformAsset(
+        self,"lambda_code",
+        path="./lambda",  
+        type=AssetType.ARCHIVE
+        )
+
 
         lambda_function = LambdaFunction(
             self, "lambda",
-            function_name="",
+            function_name="rekognitionProcessor",
             runtime="python3.10",
             memory_size=128,
             timeout=60,
-            role=f"",
+            role=f"arn:aws:iam::{account_id}:role/LabRole",
             filename= code.path,
-            handler="",
-            environment={"variables":{}}
+            handler="lambda_function.lambda_handler",
+            environment={
+                "variables": {
+                    "TABLE_NAME": dynamo_table.name,
+                    "BUCKET_NAME": bucket.bucket
+                }
+            }
         )
+
 
         # NE PAS TOUCHER !!!!
         permission = LambdaPermission(
@@ -87,8 +99,13 @@ class ServerlessStack(TerraformStack):
         )
 
 
+        # Outputs
+        TerraformOutput(self, "bucket_name", value=bucket.bucket)
+        TerraformOutput(self, "table_name", value=dynamo_table.name)
+
+
+
 
 app = App()
 ServerlessStack(app, "cdktf_serverless")
 app.synth()
-
